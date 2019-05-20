@@ -32,21 +32,6 @@ def VmfParse(file):
 
             NodeParse(reader, node)
 
-            if class_name == 'versioninfo':
-                map.versioninfo = node
-            elif class_name == 'visgroups':
-                map.visgroups = node
-            elif class_name == 'viewsettings':
-                map.visgroups = node
-            elif class_name == 'world':
-                map.visgroups = node
-            elif class_name == 'entity':
-                map.entities.append(node)
-            elif class_name == 'cameras':
-                map.cameras = node
-            elif class_name == 'cordon':
-                map.cordon = node
-
 
 def NodeParse(reader, node):
 
@@ -56,7 +41,7 @@ def NodeParse(reader, node):
 
         while '"' in current_line:
             p_args = current_line.strip().strip('"').split('"')
-            node.properties[p_args[0]] = p_args[-1]
+            node.set_property(p_args[0], p_args[-1])
 
             current_line = reader.readline()
 
