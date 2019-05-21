@@ -61,7 +61,7 @@ def NodeParse(reader, node):
                     child_node = vmf.Node(child_class_name)
 
                 NodeParse(reader, child_node)
-                node.child_nodes.append(child_node)
+                node.add_child(child_node)
 
             else:
                 break

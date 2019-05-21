@@ -6,7 +6,7 @@ class Node:
     def __init__(self, class_name):
         self.class_name = class_name
         self._properties = {}
-        self.child_nodes = []
+        self._child_nodes = []
 
     def parse_property(self, property_name, value):
         if property_name == 'id':
@@ -15,7 +15,7 @@ class Node:
             self._properties[property_name] = value
 
     def add_child(self, node):
-        self.child_nodes.append(node)
+        self._child_nodes.append(node)
 
 
 # Node classes for vmf root
@@ -38,10 +38,26 @@ class visgroups(Node):
     def __init__(self):
         Node.__init__(self, 'visgroups')
 
+    def parse_property(self, property_name, value):
+        if property_name == 'visgroupid':
+            self._properties[property_name] = int(value)
+        elif property_name == 'color':
+            self._properties[property_name] = parse_rgb(value)
+        else:
+            Node.parse_property(self, property_name, value)
+
 
 class visgroup(Node):
     def __init__(self):
         Node.__init__(self, 'visgroup')
+
+    def parse_property(self, property_name, value):
+        if property_name == 'visgroupid':
+            self._properties[property_name] = int(value)
+        elif property_name == 'color':
+            self._properties[property_name] = parse_rgb(value)
+        else:
+            Node.parse_property(self, property_name, value)
 
 
 class viewsettings(Node):
@@ -75,17 +91,31 @@ class world(Node):
 
 
 class entity(Node):
+
     def __init__(self):
         Node.__init__(self, 'entity')
-        self.connections = []
-        self.solids = []
-        self.hiddens = []
-        self.editor = None
+        self._connections = []
+        self._solids = []
+        self._hiddens = []
+        self._editor = editor()
+
+    def parse_property(self, property_name, value):
+        if property_name == 'origin':
+            self._properties[property_name] = parse_vertex(value)
+        elif property_name == 'spawnflags':
+            self._properties[property_name] = int(value)
+        else:
+            Node.parse_property(self, property_name, value)
 
 
 class connections(Node):
+
     def __init__(self):
+        self.connections = []
         Node.__init__(self, 'connections')
+
+    def parse_property(self, property_name, value):
+        self.connections.append((property_name, value))
 
 
 class cordons(Node):
@@ -130,7 +160,7 @@ class cameras(Node):
 
     def __init__(self):
         Node.__init__(self, 'cameras')
-        self.cameras = []
+        self._cameras = []
 
     def parse_property(self, property_name, value):
         if property_name == 'activecamera':
@@ -154,16 +184,21 @@ class camera(Node):
 
 class solid(Node):
     def __init__(self):
+        self._sides = []
+        self._editor = editor()
         Node.__init__(self, 'solid')
 
 
 class hidden(Node):
     def __init__(self):
         Node.__init__(self, 'hidden')
+        self._solid = None
+        self._entity = None
 
 
 class group(Node):
     def __init__(self):
+        self._editor = editor()
         Node.__init__(self, 'group')
 
 
