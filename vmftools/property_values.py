@@ -8,13 +8,19 @@ class vertex():
         self._y = y
         self._z = z
 
-    def __repr__(self):
-        # Represented as: (0 0 0)
-        return repr(self._x) + ' ' + repr(self._y) + ' ' + repr(self._z)
+    def __repr__(self, plane=False):
+        # Represented as: (0 0 0) or [0 0 0]
+        s = repr(self._x) + ' ' + repr(self._y) + ' ' + repr(self._z)
+        if (plane):
+            s = '(' + s + ')'
+        else:
+            s = '[' + s + ']'
+        return s
 
 
 def parse_vertex(string_repr):
-    vals = string_repr.split(' ')
+    vals = string_repr.strip().strip(
+        '(').strip(')').strip('[').strip(']').split(' ')
     v = vertex(parse_decimal(vals[0]),
                parse_decimal(vals[1]),
                parse_decimal(vals[2]))
@@ -29,8 +35,9 @@ class plane():
 
     def __repr__(self):
         # Represented as: (0 0 0) (0 0 0) (0 0 0)
-        return "(" + repr(self._v1) + ') (' + \
-            repr(self._v2) + ') (' + repr(self._v3) + ')'
+        return repr(self._v1, True) + \
+            ' ' + repr(self._v2) + \
+            ' ' + repr(self._v3)
 
 
 def parse_plane(string_repr):

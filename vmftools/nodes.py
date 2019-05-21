@@ -106,10 +106,24 @@ class cameras(Node):
         Node.__init__(self, 'cameras')
         self.cameras = []
 
+    def set_property(self, property_name, value):
+        vertex
+        if property_name == 'position':
+            self._properties[property_name] = int(value)
+        else:
+            Node.set_property(self, property_name, value)
+
 
 class camera(Node):
     def __init__(self):
         Node.__init__(self, 'camera')
+
+    def set_property(self, property_name, value):
+        vertex_properties = ['position', 'look']
+        if property_name in vertex_properties:
+            self._properties[property_name] = parse_vertex(value)
+        else:
+            Node.set_property(self, property_name, value)
 
 # node classes for World
 
