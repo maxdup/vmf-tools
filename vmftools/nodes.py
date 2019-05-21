@@ -8,7 +8,7 @@ class Node:
         self._properties = {}
         self.child_nodes = []
 
-    def set_property(self, property_name, value):
+    def parse_property(self, property_name, value):
         if property_name == 'id':
             self._properties[property_name] = int(value)
         else:
@@ -23,13 +23,15 @@ class versioninfo(Node):
     def __init__(self):
         Node.__init__(self, 'versioninfo')
 
-    def set_property(self, property_name, value):
+    def parse_property(self, property_name, value):
         int_properties = ['editorversion', 'editorbuild', 'mapversion',
-                          'formatversion', 'prefab']
-        if property_name in int_properties:
+                          'formatversion']
+        if property_name == 'prefab':
+            self._properties[property_name] = parse_boolean(value)
+        elif property_name in int_properties:
             self._properties[property_name] = int(value)
         else:
-            Node.set_property(self, property_name, value)
+            Node.parse_property(self, property_name, value)
 
 
 class visgroups(Node):
@@ -46,13 +48,15 @@ class viewsettings(Node):
     def __init__(self):
         Node.__init__(self, 'viewsettings')
 
-    def set_property(self, property_name, value):
-        int_properties = ['bSnapToGrid', 'bShowGrid', 'bShowLogicalGrid',
-                          'nGridSpacing', 'bShow3DGrid']
-        if property_name in int_properties:
+    def parse_property(self, property_name, value):
+        bool_properties = ['bSnapToGrid', 'bShowGrid',
+                           'bShowLogicalGrid', 'bShow3DGrid']
+        if property_name in bool_properties:
+            self._properties[property_name] = parse_boolean(value)
+        elif property_name == 'nGridSpacing':
             self._properties[property_name] = int(value)
         else:
-            Node.set_property(self, property_name, value)
+            Node.parse_property(self, property_name, value)
 
 
 class world(Node):
@@ -62,12 +66,12 @@ class world(Node):
         self.hiddens = []
         self.groups = []
 
-    def set_property(self, property_name, value):
+    def parse_property(self, property_name, value):
         int_properties = ['mapversion', 'maxpropscreenwidth']
         if property_name in int_properties:
             self._properties[property_name] = int(value)
         else:
-            Node.set_property(self, property_name, value)
+            Node.parse_property(self, property_name, value)
 
 
 class entity(Node):
@@ -88,16 +92,38 @@ class cordons(Node):
     def __init__(self):
         Node.__init__(self, 'cordons')
 
+    def parse_property(self, property_name, value):
+        if property_name == 'active':
+            self._properties[property_name] = parse_boolean(value)
+        else:
+            Node.parse_property(self, property_name, value)
+
 
 class cordon(Node):
     def __init__(self):
         Node.__init__(self, 'cordon')
         self.box = None
 
+    def parse_property(self, property_name, value):
+        if property_name == 'active':
+            self._properties[property_name] = parse_boolean(value)
+        elif property_name == 'mins' or property_name == 'maxs':
+            self._properties[property_name] = parse_vertex(value)
+        else:
+            Node.parse_property(self, property_name, value)
+
 
 class box(Node):
     def __init__(self):
         Node.__init__(self, 'cordon')
+
+    def parse_property(self, property_name, value):
+        if property_name == 'active':
+            self._properties[property_name] = parse_boolean(value)
+        elif property_name == 'mins' or property_name == 'maxs':
+            self._properties[property_name] = parse_vertex(value)
+        else:
+            Node.parse_property(self, property_name, value)
 
 
 class cameras(Node):
@@ -106,24 +132,22 @@ class cameras(Node):
         Node.__init__(self, 'cameras')
         self.cameras = []
 
-    def set_property(self, property_name, value):
-        vertex
-        if property_name == 'position':
+    def parse_property(self, property_name, value):
+        if property_name == 'activecamera':
             self._properties[property_name] = int(value)
         else:
-            Node.set_property(self, property_name, value)
+            Node.parse_property(self, property_name, value)
 
 
 class camera(Node):
     def __init__(self):
         Node.__init__(self, 'camera')
 
-    def set_property(self, property_name, value):
-        vertex_properties = ['position', 'look']
-        if property_name in vertex_properties:
+    def parse_property(self, property_name, value):
+        if property_name in ['position', 'look']:
             self._properties[property_name] = parse_vertex(value)
         else:
-            Node.set_property(self, property_name, value)
+            Node.parse_property(self, property_name, value)
 
 # node classes for World
 
@@ -148,7 +172,7 @@ class side(Node):
     def __init__(self):
         Node.__init__(self, 'side')
 
-    def set_property(self, property_name, value):
+    def parse_property(self, property_name, value):
         if property_name == 'plane':
             self._properties[property_name] = parse_plane(value)
         elif property_name == 'uaxis' or property_name == 'vaxis':
@@ -159,14 +183,14 @@ class side(Node):
         elif property_name == 'rotation':
             self._properties[property_name] = parse_decimal(value)
         else:
-            Node.set_property(self, property_name, value)
+            Node.parse_property(self, property_name, value)
 
 
 class editor(Node):
     def __init__(self):
         Node.__init__(self, 'editor')
 
-    def set_property(self, property_name, value):
+    def parse_property(self, property_name, value):
         if property_name == 'color ':
             self._properties[property_name] = parse_rgb(value)
         elif property_name == 'logicalpos':
@@ -176,7 +200,7 @@ class editor(Node):
         elif property_name in ['visgroupshown', 'visgroupautoshown']:
             self._properties[property_name] = parse_boolean(value)
         else:
-            Node.set_property(self, property_name, value)
+            Node.parse_property(self, property_name, value)
 
 
 # child Node class for sides

@@ -41,7 +41,7 @@ def NodeParse(reader, node):
 
         while '"' in current_line:
             p_args = current_line.strip().strip('"').split('"')
-            node.set_property(p_args[0], p_args[-1])
+            node.parse_property(p_args[0], p_args[-1])
 
             current_line = reader.readline()
 
