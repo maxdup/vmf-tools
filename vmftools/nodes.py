@@ -23,6 +23,14 @@ class versioninfo(Node):
     def __init__(self):
         Node.__init__(self, 'versioninfo')
 
+    def set_property(self, property_name, value):
+        int_properties = ['editorversion', 'editorbuild', 'mapversion',
+                          'formatversion', 'prefab']
+        if property_name in int_properties:
+            self._properties[property_name] = int(value)
+        else:
+            Node.set_property(self, property_name, value)
+
 
 class visgroups(Node):
     def __init__(self):
@@ -38,6 +46,14 @@ class viewsettings(Node):
     def __init__(self):
         Node.__init__(self, 'viewsettings')
 
+    def set_property(self, property_name, value):
+        int_properties = ['bSnapToGrid', 'bShowGrid', 'bShowLogicalGrid',
+                          'nGridSpacing', 'bShow3DGrid']
+        if property_name in int_properties:
+            self._properties[property_name] = int(value)
+        else:
+            Node.set_property(self, property_name, value)
+
 
 class world(Node):
     def __init__(self):
@@ -45,6 +61,13 @@ class world(Node):
         self.solids = []
         self.hiddens = []
         self.groups = []
+
+    def set_property(self, property_name, value):
+        int_properties = ['mapversion', 'maxpropscreenwidth']
+        if property_name in int_properties:
+            self._properties[property_name] = int(value)
+        else:
+            Node.set_property(self, property_name, value)
 
 
 class entity(Node):
