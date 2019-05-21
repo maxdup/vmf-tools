@@ -1,3 +1,6 @@
+from vmftools.property_values import *
+
+
 class Node:
     # abstract class for vmf nodes
     def __init__(self, class_name):
@@ -6,7 +9,10 @@ class Node:
         self.child_nodes = []
 
     def set_property(self, property_name, value):
-        self._properties[property_name] = value
+        if property_name == 'id':
+            self._properties[property_name] = int(value)
+        else:
+            self._properties[property_name] = value
 
     def add_child(self, node):
         self.child_nodes.append(node)
@@ -87,7 +93,7 @@ class camera(Node):
 
 class solid(Node):
     def __init__(self):
-        Node.__init__(self, 'solif')
+        Node.__init__(self, 'solid')
 
 
 class hidden(Node):
@@ -104,6 +110,19 @@ class group(Node):
 class side(Node):
     def __init__(self):
         Node.__init__(self, 'side')
+
+    def set_property(self, property_name, value):
+        if property_name == 'plane':
+            self._properties[property_name] = parse_plane(value)
+        elif property_name == 'uaxis' or property_name == 'vaxis':
+            self._properties[property_name] = parse_uvaxis(value)
+        elif property_name == 'lightmapscale' or \
+                property_name == 'smoothing_groups':
+            self._properties[property_name] = int(value)
+        elif property_name == 'rotation':
+            self._properties[property_name] = parse_decimal(value)
+        else:
+            Node.set_property(self, property_name, value)
 
 
 class editor(Node):
