@@ -91,14 +91,43 @@ def parse_uvaxis(string_repr):
     return axis
 
 
-class decimal():
-    def __init__(self, value):
-        self.value = value
+class twodvector():
+    def __init__(self, x, y):
+        self._x = x
+        self._y = y
 
     def __repr__(self):
-        return str(self.value)
+        s = '[' + repr(self._x) + ' ' + repr(self._y) + ']'
+        return s
+
+
+def parse_twodvector(string_repr):
+    vals = string_repr.strip().strip('[').strip(']').strip().split(' ')
+    v = twodvector(parse_decimal(vals[0]), parse_decimal(vals[1]))
+    return v
+
+
+class decimal():
+    def __init__(self, value):
+        self._value = value
+
+    def __repr__(self):
+        return str(self._value)
 
 
 def parse_decimal(string_repr):
     d = decimal(Decimal(string_repr))
     return d
+
+
+class boolean():
+    def __init__(self, value):
+        self._value = value
+
+    def __repr__(self):
+        return str(int(self._value))
+
+
+def parse_boolean(string_repr):
+    b = (string_repr == '1')
+    return b

@@ -166,6 +166,18 @@ class editor(Node):
     def __init__(self):
         Node.__init__(self, 'editor')
 
+    def set_property(self, property_name, value):
+        if property_name == 'color ':
+            self._properties[property_name] = parse_rgb(value)
+        elif property_name == 'logicalpos':
+            self._properties[property_name] = parse_twodvector(value)
+        elif property_name in ['visgroupid', 'groupid']:
+            self._properties[property_name] = int(value)
+        elif property_name in ['visgroupshown', 'visgroupautoshown']:
+            self._properties[property_name] = parse_boolean(value)
+        else:
+            Node.set_property(self, property_name, value)
+
 
 # child Node class for sides
 class dispinfo(Node):
