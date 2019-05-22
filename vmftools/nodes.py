@@ -226,7 +226,7 @@ class editor(Node):
         Node.__init__(self, 'editor')
 
     def parse_property(self, property_name, value):
-        if property_name == 'color ':
+        if property_name == 'color':
             self._properties[property_name] = parse_rgb(value)
         elif property_name == 'logicalpos':
             self._properties[property_name] = parse_twodvector(value)
@@ -242,39 +242,80 @@ class editor(Node):
 class dispinfo(Node):
     def __init__(self):
         Node.__init__(self, 'dispinfo')
+        self._normals = None
+        self._distances = None
+        self._offsets = None
+        self._offset_normals = None
+        self._alphas = None
+        self._triangle_tags = None
+        self._allowed_verts = None
 
+    def parse_property(self, property_name, value):
+        if property_name == 'power':
+            self._properties[property_name] = min(2, max(4, int(value)))
+        elif property_name == 'startposition':
+            self._properties[property_name] = parse_vertex(value)
+        elif property_name == 'subdiv':
+            self._properties[property_name] = parse_boolean(value)
+        elif property_name == 'elevation':
+            self._properties[property_name] = parse_decimal(value)
+        else:
+            Node.parse_property(self, property_name, value)
 
 # child Node classes for dispinfo
-class normals(Node):
+
+
+class disp_vertices(Node):
     def __init__(self):
+        self._rows = []
+
+    def parse_property(self, row_string, value):
+        rowId = int(''.join(re.findall(r'\d+', row_string)))
+        if rowId >= len(self._rows):
+            for i in range(len(self._rows), rowId+1):
+                self._rows.append(None)
+        row = parse_vertex_row(value)
+        self._rows[rowId] = row
+        print(repr(row))
+
+
+class normals(disp_vertices):
+    def __init__(self):
+        disp_vertices.__init__(self)
         Node.__init__(self, 'normals')
 
 
+class offsets(disp_vertices):
+    def __init__(self):
+        disp_vertices.__init__(self)
+        Node.__init__(self, 'offsets')
+
+
+class offset_normals(disp_vertices):
+    def __init__(self):
+        disp_vertices.__init__(self)
+        Node.__init__(self, 'offset_normals')
+
+
 class distances(Node):
+    # decimals
     def __init__(self):
         Node.__init__(self, 'distances')
 
 
-class offsets(Node):
-    def __init__(self):
-        Node.__init__(self, 'offsets')
-
-
-class offset_normals(Node):
-    def __init__(self):
-        Node.__init__(self, 'offset_normals')
-
-
 class alphas(Node):
+    # int 0-255
     def __init__(self):
         Node.__init__(self, 'alphas')
 
 
 class triangle_tags(Node):
+    #0,1 or 9
     def __init__(self):
         Node.__init__(self, 'triangle_tags')
 
 
 class allowed_verts(Node):
+    # ints
     def __init__(self):
         Node.__init__(self, 'allowed_verts')

@@ -10,7 +10,7 @@ class vertex():
 
     def __repr__(self, plane=False):
         # Represented as: (0 0 0) or [0 0 0]
-        s = repr(self._x) + ' ' + repr(self._y) + ' ' + repr(self._z)
+        s = str(self._x) + ' ' + str(self._y) + ' ' + str(self._z)
         if (plane):
             s = '(' + s + ')'
         else:
@@ -25,6 +25,26 @@ def parse_vertex(string_repr):
                parse_decimal(vals[1]),
                parse_decimal(vals[2]))
     return v
+
+
+class vertex_row():
+    def __init__(self, vals):
+        self._row = vals
+
+    def __repr__(self):
+        row = ''
+        for r in self._row:
+            row += repr(r).strip('[').strip(']') + ' '
+        return row.strip()
+
+
+def parse_vertex_row(string_repr):
+    vals = string_repr.split(' ')
+    vertices = []
+    for i in range(0, int(len(vals)/3)):
+        vertices.append(vertex(vals[i*3+0], vals[i*3+1], vals[i*3+2]))
+    vr = vertex_row(vertices)
+    return vr
 
 
 class plane():
