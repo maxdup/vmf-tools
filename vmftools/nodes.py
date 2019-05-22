@@ -276,7 +276,6 @@ class disp_vertices(Node):
                 self._rows.append(None)
         row = parse_vertex_row(value)
         self._rows[rowId] = row
-        print(repr(row))
 
 
 class normals(disp_vertices):
@@ -298,24 +297,53 @@ class offset_normals(disp_vertices):
 
 
 class distances(Node):
-    # decimals
     def __init__(self):
+        self._rows = []
         Node.__init__(self, 'distances')
+
+    def parse_property(self, row_string, value):
+        rowId = int(''.join(re.findall(r'\d+', row_string)))
+        if rowId >= len(self._rows):
+            for i in range(len(self._rows), rowId+1):
+                self._rows.append(None)
+        row = parse_decimal_row(value)
+        self._rows[rowId] = row
 
 
 class alphas(Node):
-    # int 0-255
     def __init__(self):
+        self._rows = []
         Node.__init__(self, 'alphas')
+
+    def parse_property(self, row_string, value):
+        rowId = int(''.join(re.findall(r'\d+', row_string)))
+        if rowId >= len(self._rows):
+            for i in range(len(self._rows), rowId+1):
+                self._rows.append(None)
+        row = parse_alpha_row(value)
+        self._rows[rowId] = row
 
 
 class triangle_tags(Node):
-    #0,1 or 9
     def __init__(self):
+        self._rows = []
         Node.__init__(self, 'triangle_tags')
+
+    def parse_property(self, row_string, value):
+        rowId = int(''.join(re.findall(r'\d+', row_string)))
+        if rowId >= len(self._rows):
+            for i in range(len(self._rows), rowId+1):
+                self._rows.append(None)
+        row = parse_tritag_row(value)
+        self._rows[rowId] = row
 
 
 class allowed_verts(Node):
     # ints
     def __init__(self):
+        self._allows = []
         Node.__init__(self, 'allowed_verts')
+
+    def parse_property(self, property_name, value):
+        if property_name == '10':
+            self._properties[property_name] = parse_allowed_row(value)
