@@ -4,9 +4,28 @@ from vmftools.property_values import *
 class Node:
     # abstract class for vmf nodes
     def __init__(self, class_name):
-        self.class_name = class_name
+        self._class_name = class_name
         self._properties = {}
         self._child_nodes = []
+        self.depth = 0
+
+    def __repr__(self):
+        text = ('\t' * self.depth) + self._class_name + '\n'
+        text += ('\t' * self.depth) + '{\n'
+        for k, v in self._properties.items():
+            text += ('\t' * (self.depth + 1))
+            if isinstance(v, str):
+                text += '"' + k + '" "' + v + '"\n'
+            elif isinstance(v, bool):
+                rep = '1' if v else '0'
+                text += '"' + k + '" "' + rep + '"\n'
+            else:
+                text += '"' + k + '" "' + repr(v) + '"\n'
+        for n in self._child_nodes:
+            n.depth = self.depth + 1
+            text += repr(n)
+        text += ('\t' * self.depth) + '}\n'
+        return text
 
     def parse_property(self, property_name, value):
         if property_name == 'id':
@@ -265,7 +284,21 @@ class dispinfo(Node):
 # child Node classes for dispinfo
 
 
-class disp_vertices(Node):
+class disp_node(Node):
+
+    def __repr__(self):
+        text = ('\t' * self.depth) + self._class_name + '\n'
+        text += ('\t' * self.depth) + '{\n'
+        for i in range(0, len(self._rows)):
+            text += ('\t' * (self.depth + 1))
+            text += '"' + 'row' + str(i) + '" "'
+            text += repr(self._rows[i])
+            text += '"\n'
+        text += ('\t' * self.depth) + '}\n'
+        return text
+
+
+class disp_vertices(disp_node):
     def __init__(self):
         self._rows = []
 
@@ -296,7 +329,7 @@ class offset_normals(disp_vertices):
         Node.__init__(self, 'offset_normals')
 
 
-class distances(Node):
+class distances(disp_node):
     def __init__(self):
         self._rows = []
         Node.__init__(self, 'distances')
@@ -310,7 +343,7 @@ class distances(Node):
         self._rows[rowId] = row
 
 
-class alphas(Node):
+class alphas(disp_node):
     def __init__(self):
         self._rows = []
         Node.__init__(self, 'alphas')
@@ -324,7 +357,7 @@ class alphas(Node):
         self._rows[rowId] = row
 
 
-class triangle_tags(Node):
+class triangle_tags(disp_node):
     def __init__(self):
         self._rows = []
         Node.__init__(self, 'triangle_tags')

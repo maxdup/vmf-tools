@@ -19,29 +19,54 @@ class VMF():
 
         self.unknown_childs = []
 
-        def add_child(self, node):
-            if isinstance(node, versioninfo):
-                self._versioninfo = node
-            elif isinstance(node, visgroups):
-                self._visgroups = node
-            elif isinstance(node, viewsettings):
-                self._viewsettings = node
-            elif isinstance(node, world):
-                self._world = node
-            elif isinstance(node, entity):
-                self._entities.append(node)
-            elif isinstance(node, cameras):
-                self._cameras = node
-            elif isinstance(node, cordon):
-                self._cordon = node
-            elif isinstance(node, hidden):
-                self._hiddens.append(node)
-            elif isinstance(node, cordons):
-                self._cordons = cordons
-            elif isinstance(node, cordon):
-                if self.cordons:
-                    self.cordons.append(node)
-                else:
-                    self._cordon = cordon
+    def __repr__(self):
+        text = ''
+        if self._versioninfo:
+            text += repr(self._versioninfo)
+        if self._visgroups:
+            text += repr(self._visgroups)
+        if self._viewsettings:
+            text += repr(self._viewsettings)
+        if self._world:
+            text += repr(self._world)
+        if self._entities:
+            for ent in self._entities:
+                text += repr(ent)
+        if self._hiddens:
+            for hid in self._hiddens:
+                text += repr(hid)
+        if self._cameras:
+            text += repr(self._cameras)
+        if self._cordon:
+            text += repr(self._cordon)
+        if self._cordons:
+            text += repr(self._cordons)
+
+        return text
+
+    def add_child(self, node):
+        if isinstance(node, versioninfo):
+            self._versioninfo = node
+        elif isinstance(node, visgroups):
+            self._visgroups = node
+        elif isinstance(node, viewsettings):
+            self._viewsettings = node
+        elif isinstance(node, world):
+            self._world = node
+        elif isinstance(node, entity):
+            self._entities.append(node)
+        elif isinstance(node, cameras):
+            self._cameras = node
+        elif isinstance(node, cordon):
+            self._cordon = node
+        elif isinstance(node, hidden):
+            self._hiddens.append(node)
+        elif isinstance(node, cordons):
+            self._cordons = cordons
+        elif isinstance(node, cordon):
+            if self.cordons:
+                self.cordons.append(node)
             else:
-                self.unknown_childs.append(node)
+                self._cordon = cordon
+        else:
+            self.unknown_childs.append(node)

@@ -7,23 +7,25 @@ class vertex():
         self._x = x
         self._y = y
         self._z = z
+        self.type = 'entity'  # or 'plane'
 
-    def __repr__(self, plane=False):
+    def __repr__(self):
         # Represented as: (0 0 0) or [0 0 0]
         s = str(self._x) + ' ' + str(self._y) + ' ' + str(self._z)
-        if (plane):
+        if (self.type == 'plane'):
             s = '(' + s + ')'
         else:
             s = '[' + s + ']'
         return s
 
 
-def parse_vertex(string_repr):
+def parse_vertex(string_repr, plane=False):
     vals = string_repr.strip().strip(
         '(').strip(')').strip('[').strip(']').split(' ')
     v = vertex(parse_decimal(vals[0]),
                parse_decimal(vals[1]),
                parse_decimal(vals[2]))
+    v.type = 'plane' if plane else 'entity'
     return v
 
 
@@ -54,14 +56,18 @@ def parse_vertex_row(string_repr):
 class plane():
     def __init__(self, v1, v2, v3):
         self._v1 = v1
+        self._v1.type = "plane"
         self._v2 = v2
+        self._v2.type = "plane"
         self._v3 = v3
+        self._v3.type = "plane"
 
     def __repr__(self):
         # Represented as: (0 0 0) (0 0 0) (0 0 0)
-        return repr(self._v1, True) + \
-            ' ' + repr(self._v2) + \
-            ' ' + repr(self._v3)
+        s = repr(self._v1) + ' ' + \
+            repr(self._v2) + ' ' + \
+            repr(self._v3)
+        return s
 
 
 def parse_plane(string_repr):
@@ -81,7 +87,7 @@ class rgb():
 
     def __repr__(self):
         # Represented as: 255 255 255
-        return repr(self._r) + ' ' + \
+        return repr(self._r) + 'x ' + \
             repr(self._g) + ' ' + \
             repr(self._b) + ' '
 

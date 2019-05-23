@@ -30,7 +30,9 @@ def VmfParse(file):
                 class_ = getattr(vmf, 'Node')
                 node = vmf.Node(class_name)
 
-            NodeParse(reader, node)
+            map.add_child(NodeParse(reader, node))
+
+    return map
 
 
 def NodeParse(reader, node):
