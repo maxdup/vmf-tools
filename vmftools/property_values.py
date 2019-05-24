@@ -140,7 +140,7 @@ def parse_twodvector(string_repr):
     return v
 
 
-class decimal_row():
+class disp_row():
     def __init__(self, vals):
         self._row = vals
 
@@ -157,20 +157,8 @@ def parse_decimal_row(string_repr):
     decimals = []
     for i in range(0, len(vals)):
         decimals.append(Decimal(vals[i]))
-    dr = decimal_row(decimals)
+    dr = disp_row(decimals)
     return dr
-
-
-class alpha_row():
-    def __init__(self, vals):
-        self._row = vals
-
-    def __repr__(self):
-        # Represented as: 0 0 0 0 0
-        row = ''
-        for r in self._row:
-            row += str(r).strip('[').strip(']') + ' '
-        return row.strip()
 
 
 def parse_alpha_row(string_repr):
@@ -178,20 +166,8 @@ def parse_alpha_row(string_repr):
     alphas = []
     for i in range(0, len(vals)):
         alphas.append(min(255, max(-1, Decimal(vals[i]))))
-    ar = alpha_row(alphas)
+    ar = disp_row(alphas)
     return ar
-
-
-class tritag_row():
-    def __init__(self, vals):
-        self._row = vals
-
-    def __repr__(self):
-        # Represented as: 9 9 9 9 9 9 9 9
-        row = ''
-        for r in self._row:
-            row += repr(r).strip('[').strip(']') + ' '
-        return row.strip()
 
 
 def parse_tritag_row(string_repr):
@@ -202,20 +178,8 @@ def parse_tritag_row(string_repr):
         if val != 0 and val != 1 and val != 9:
             val = 0
         tags.append(val)
-    tr = tritag_row(tags)
+    tr = disp_row(tags)
     return tr
-
-
-class allows_row():
-    def __init__(self, vals):
-        self._row = vals
-
-    def __repr__(self):
-        # Represented as: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-        row = ''
-        for r in self._row:
-            row += repr(r).strip('[').strip(']') + ' '
-        return row.strip()
 
 
 def parse_allowed_row(string_repr):
@@ -223,5 +187,5 @@ def parse_allowed_row(string_repr):
     allows = []
     for i in range(0, len(vals)):
         allows.append(int(vals[i]))
-    ar = allows_row(allows)
+    ar = disp_row(allows)
     return ar
