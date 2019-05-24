@@ -3,20 +3,20 @@ import re
 
 
 class vertex():
-    def __init__(self, x, y, z):
+    def __init__(self, x, y, z, wrapper=''):
         self._x = x
         self._y = y
         self._z = z
-        self.type = 'entity'  # or 'plane'
+        self.wrapper = wrapper
 
     def __repr__(self):
         # Represented as: (0 0 0) or [0 0 0]
         s = repr_property_value(self._x) + ' ' + \
             repr_property_value(self._y) + ' ' + \
             repr_property_value(self._z)
-        if (self.type == 'plane'):
+        if (self.wrapper == '('):
             s = '(' + s + ')'
-        else:
+        elif (self.wrapper == '['):
             s = '[' + s + ']'
         return s
 
@@ -46,9 +46,9 @@ class rgb():
 
     def __repr__(self):
         # Represented as: 255 255 255
-        return repr(self._r) + 'x ' + \
+        return repr(self._r) + ' ' + \
             repr(self._g) + ' ' + \
-            repr(self._b) + ' '
+            repr(self._b)
 
 
 class uvaxis():
@@ -90,7 +90,7 @@ class value_row():
         row = ''
         for r in self._row:
             row += repr_property_value(r).strip('[').strip(']') + ' '
-        return row.strip()
+        return row.strip(' ')
 
 
 def repr_property_value(val):

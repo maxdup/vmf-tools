@@ -188,7 +188,7 @@ class cordon(Node):
         if property_name == 'active':
             self._properties[property_name] = bool(int(value))
         elif property_name == 'mins' or property_name == 'maxs':
-            self._properties[property_name] = parse_vertex(value)
+            self._properties[property_name] = parse_vertex(value, '(')
         else:
             Node.parse_property(self, property_name, value)
 
@@ -201,7 +201,7 @@ class box(Node):
         if property_name == 'active':
             self._properties[property_name] = bool(int(value))
         elif property_name == 'mins' or property_name == 'maxs':
-            self._properties[property_name] = parse_vertex(value)
+            self._properties[property_name] = parse_vertex(value, '(')
         else:
             Node.parse_property(self, property_name, value)
 
@@ -225,7 +225,7 @@ class camera(Node):
 
     def parse_property(self, property_name, value):
         if property_name in ['position', 'look']:
-            self._properties[property_name] = parse_vertex(value)
+            self._properties[property_name] = parse_vertex(value, '[')
         else:
             Node.parse_property(self, property_name, value)
 
@@ -326,7 +326,7 @@ class dispinfo(Node):
         if property_name == 'power':
             self._properties[property_name] = min(2, max(4, int(value)))
         elif property_name == 'startposition':
-            self._properties[property_name] = parse_vertex(value)
+            self._properties[property_name] = parse_vertex(value, '[')
         elif property_name == 'subdiv':
             self._properties[property_name] = bool(int(value))
         elif property_name == 'elevation':

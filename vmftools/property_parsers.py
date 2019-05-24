@@ -1,12 +1,11 @@
 from vmftools.property_values import *
 
 
-def parse_vertex(string_repr, plane=False):
+def parse_vertex(string_repr, wrapper=''):
     vals = string_repr.strip().strip(
         '(').strip(')').strip('[').strip(']').split(' ')
-    v = vertex(Decimal(vals[0]),
-               Decimal(vals[1]),
-               Decimal(vals[2]))
+    v = vertex(Decimal(vals[0]), Decimal(vals[1]),
+               Decimal(vals[2]), wrapper)
     v.type = 'plane' if plane else 'entity'
     return v
 
@@ -14,9 +13,9 @@ def parse_vertex(string_repr, plane=False):
 def parse_plane(string_repr):
     string_repr = string_repr.strip(' ').strip(')').strip('(')
     vals = string_repr.replace(') (', ')(').split(')(')
-    p = plane(parse_vertex(vals[0]),
-              parse_vertex(vals[1]),
-              parse_vertex(vals[2]))
+    p = plane(parse_vertex(vals[0], '('),
+              parse_vertex(vals[1], '('),
+              parse_vertex(vals[2], '('))
     return p
 
 
