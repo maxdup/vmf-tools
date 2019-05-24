@@ -17,7 +17,7 @@ class VMF():
         # some versions of hammer store multiple cordons
         self._cordons = None
 
-        self.unknown_childs = []
+        self._child_nodes = []
 
     def __repr__(self):
         text = ''
@@ -68,5 +68,5 @@ class VMF():
                 self.cordons.append(node)
             else:
                 self._cordon = cordon
-        else:
-            self.unknown_childs.append(node)
+
+        self._child_nodes.append(node)

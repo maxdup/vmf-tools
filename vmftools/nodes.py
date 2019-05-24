@@ -54,6 +54,7 @@ class versioninfo(Node):
 class visgroups(Node):
     def __init__(self):
         Node.__init__(self, 'visgroups')
+        self._visgroups = []
 
     def parse_property(self, property_name, value):
         if property_name == 'visgroupid':
@@ -62,11 +63,17 @@ class visgroups(Node):
             self._properties[property_name] = parse_rgb(value)
         else:
             Node.parse_property(self, property_name, value)
+
+    def add_child(self, node):
+        if isinstance(node, visgroup):
+            self._visgroups.append(node)
+        Node.add_child(self, node)
 
 
 class visgroup(Node):
     def __init__(self):
         Node.__init__(self, 'visgroup')
+        self._visgroups = []
 
     def parse_property(self, property_name, value):
         if property_name == 'visgroupid':
@@ -75,6 +82,11 @@ class visgroup(Node):
             self._properties[property_name] = parse_rgb(value)
         else:
             Node.parse_property(self, property_name, value)
+
+    def add_child(self, node):
+        if isinstance(node, visgroup):
+            self._visgroups.append(node)
+        Node.add_child(self, node)
 
 
 class viewsettings(Node):
@@ -95,9 +107,9 @@ class viewsettings(Node):
 class world(Node):
     def __init__(self):
         Node.__init__(self, 'world')
-        self.solids = []
-        self.hiddens = []
-        self.groups = []
+        self._solids = []
+        self._hiddens = []
+        self._groups = []
 
     def parse_property(self, property_name, value):
         int_properties = ['mapversion', 'maxpropscreenwidth']
@@ -105,6 +117,16 @@ class world(Node):
             self._properties[property_name] = int(value)
         else:
             Node.parse_property(self, property_name, value)
+
+    def add_child(self, node):
+        if isinstance(node, solid):
+            self._solids.append(node)
+        elif isinstance(node, hidden):
+            self._hiddens.append(node)
+        elif isinstance(node, group):
+            self._hiddens.append(node)
+
+        Node.add_child(self, node)
 
 
 class entity(Node):
@@ -114,6 +136,7 @@ class entity(Node):
         self._connections = []
         self._solids = []
         self._hiddens = []
+        self._groups = []
         self._editor = editor()
 
     def parse_property(self, property_name, value):
@@ -123,6 +146,16 @@ class entity(Node):
             self._properties[property_name] = int(value)
         else:
             Node.parse_property(self, property_name, value)
+
+    def add_child(self, node):
+        if isinstance(node, solid):
+            self._solids.append(node)
+        if isinstance(node, hidden):
+            self._solids.append(node)
+        if isinstance(node, editor):
+            self._editor = (node)
+
+        Node.add_child(self, node)
 
 
 class connections(Node):
@@ -204,12 +237,28 @@ class solid(Node):
         self._editor = editor()
         Node.__init__(self, 'solid')
 
+    def add_child(self, node):
+        if isinstance(node, side):
+            self._sides.append(node)
+        elif isinstance(node, editor):
+            self.editor = node
+
+        Node.add_child(self, node)
+
 
 class hidden(Node):
     def __init__(self):
         Node.__init__(self, 'hidden')
-        self._solid = None
-        self._entity = None
+        self._solids = []
+        self._entities = []
+
+    def add_child(self, node):
+        if isinstance(node, solid):
+            self._solids.append(node)
+        elif isinstance(node, entity):
+            self._entities.append(node)
+
+        Node.add_child(self, node)
 
 
 class group(Node):
@@ -222,6 +271,7 @@ class group(Node):
 class side(Node):
     def __init__(self):
         Node.__init__(self, 'side')
+        self._dispinfo = None
 
     def parse_property(self, property_name, value):
         if property_name == 'plane':
@@ -235,6 +285,12 @@ class side(Node):
             self._properties[property_name] = Decimal(value)
         else:
             Node.parse_property(self, property_name, value)
+
+    def add_child(self, node):
+        if isinstance(node, dispinfo):
+            self._dispinfo = node
+
+        Node.add_child(self, node)
 
 
 class editor(Node):
@@ -277,6 +333,25 @@ class dispinfo(Node):
             self._properties[property_name] = Decimal(value)
         else:
             Node.parse_property(self, property_name, value)
+
+    def add_child(self, node):
+        if isinstance(node, offsets):
+            self._offsets = node
+        elif isinstance(node, distances):
+            self._distances = node
+        elif isinstance(node, normals):
+            self._normals = node
+        elif isinstance(node, offset_normals):
+            self._offset_normals = node
+        elif isinstance(node, alphas):
+            self._alphas = node
+        elif isinstance(node, triangle_tags):
+            self._triangle_tags = node
+        elif isinstance(node, allowed_verts):
+            self._allowed_verts = node
+
+        Node.add_child(self, node)
+
 
 # child Node classes for dispinfo
 
