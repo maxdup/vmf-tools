@@ -1,5 +1,5 @@
-import re
 from decimal import Decimal
+import re
 
 
 class vertex():
@@ -22,9 +22,9 @@ class vertex():
 def parse_vertex(string_repr, plane=False):
     vals = string_repr.strip().strip(
         '(').strip(')').strip('[').strip(']').split(' ')
-    v = vertex(parse_decimal(vals[0]),
-               parse_decimal(vals[1]),
-               parse_decimal(vals[2]))
+    v = vertex(Decimal(vals[0]),
+               Decimal(vals[1]),
+               Decimal(vals[2]))
     v.type = 'plane' if plane else 'entity'
     return v
 
@@ -45,9 +45,9 @@ def parse_vertex_row(string_repr):
     vals = string_repr.split(' ')
     vertices = []
     for i in range(0, int(len(vals)/3)):
-        v = vertex(parse_decimal(vals[i*3+0]),
-                   parse_decimal(vals[i*3+1]),
-                   parse_decimal(vals[i*3+2]))
+        v = vertex(Decimal(vals[i*3+0]),
+                   Decimal(vals[i*3+1]),
+                   Decimal(vals[i*3+2]))
         vertices.append(v)
     vr = vertex_row(vertices)
     return vr
@@ -110,17 +110,17 @@ class uvaxis():
     def __repr__(self):
         # Represented as: [0 0 1 0] 0.25
         return '[' + \
-            repr(self._x) + ' ' + repr(self._y) + ' ' + \
-            repr(self._z) + ' ' + repr(self._t) + '] ' + repr(self._scale)
+            str(self._x) + ' ' + str(self._y) + ' ' + \
+            str(self._z) + ' ' + str(self._t) + '] ' + str(self._scale)
 
 
 def parse_uvaxis(string_repr):
     vals = string_repr.split(']')
     scale = vals[-1]
     coords = vals[0].strip('[').split(' ')
-    axis = uvaxis(parse_decimal(coords[0]), parse_decimal(coords[1]),
-                  parse_decimal(coords[2]), parse_decimal(coords[3]),
-                  parse_decimal(scale))
+    axis = uvaxis(Decimal(coords[0]), Decimal(coords[1]),
+                  Decimal(coords[2]), Decimal(coords[3]),
+                  Decimal(scale))
     return axis
 
 
@@ -130,33 +130,14 @@ class twodvector():
         self._y = y
 
     def __repr__(self):
-        s = '[' + repr(self._x) + ' ' + repr(self._y) + ']'
+        s = '[' + str(self._x) + ' ' + str(self._y) + ']'
         return s
 
 
 def parse_twodvector(string_repr):
     vals = string_repr.strip().strip('[').strip(']').strip().split(' ')
-    v = twodvector(parse_decimal(vals[0]), parse_decimal(vals[1]))
+    v = twodvector(Decimal(vals[0]), Decimal(vals[1]))
     return v
-
-
-class decimal():
-    def __init__(self, value):
-        self._value = value
-
-    def __repr__(self):
-        return str(self._value)
-
-    def __lt__(self, other):
-        return self._value < other
-
-    def __gt__(self, other):
-        return self._value > other
-
-
-def parse_decimal(string_repr):
-    d = decimal(Decimal(string_repr))
-    return d
 
 
 class decimal_row():
@@ -167,7 +148,7 @@ class decimal_row():
         # Represented as: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
         row = ''
         for r in self._row:
-            row += repr(r).strip('[').strip(']') + ' '
+            row += str(r).strip('[').strip(']') + ' '
         return row.strip()
 
 
@@ -175,7 +156,7 @@ def parse_decimal_row(string_repr):
     vals = string_repr.split(' ')
     decimals = []
     for i in range(0, len(vals)):
-        decimals.append(parse_decimal(vals[i]))
+        decimals.append(Decimal(vals[i]))
     dr = decimal_row(decimals)
     return dr
 
@@ -188,7 +169,7 @@ class alpha_row():
         # Represented as: 0 0 0 0 0
         row = ''
         for r in self._row:
-            row += repr(r).strip('[').strip(']') + ' '
+            row += str(r).strip('[').strip(']') + ' '
         return row.strip()
 
 
@@ -196,8 +177,7 @@ def parse_alpha_row(string_repr):
     vals = string_repr.split(' ')
     alphas = []
     for i in range(0, len(vals)):
-        val = parse_decimal(vals[i])
-        alphas.append(min(255, max(-1, val)))
+        alphas.append(min(255, max(-1, Decimal(vals[i]))))
     ar = alpha_row(alphas)
     return ar
 
@@ -245,16 +225,3 @@ def parse_allowed_row(string_repr):
         allows.append(int(vals[i]))
     ar = allows_row(allows)
     return ar
-
-
-class boolean():
-    def __init__(self, value):
-        self._value = value
-
-    def __repr__(self):
-        return str(int(self._value))
-
-
-def parse_boolean(string_repr):
-    b = (string_repr == '1')
-    return b

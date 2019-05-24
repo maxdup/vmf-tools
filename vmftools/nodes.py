@@ -19,6 +19,10 @@ class Node:
             elif isinstance(v, bool):
                 rep = '1' if v else '0'
                 text += '"' + k + '" "' + rep + '"\n'
+            elif isinstance(v, int):
+                text += '"' + k + '" "' + str(v) + '"\n'
+            elif isinstance(v, Decimal):
+                text += '"' + k + '" "' + repr(v) + '"\n'
             else:
                 text += '"' + k + '" "' + repr(v) + '"\n'
         for n in self._child_nodes:
@@ -46,7 +50,7 @@ class versioninfo(Node):
         int_properties = ['editorversion', 'editorbuild', 'mapversion',
                           'formatversion']
         if property_name == 'prefab':
-            self._properties[property_name] = parse_boolean(value)
+            self._properties[property_name] = bool(int(value))
         elif property_name in int_properties:
             self._properties[property_name] = int(value)
         else:
@@ -87,7 +91,7 @@ class viewsettings(Node):
         bool_properties = ['bSnapToGrid', 'bShowGrid',
                            'bShowLogicalGrid', 'bShow3DGrid']
         if property_name in bool_properties:
-            self._properties[property_name] = parse_boolean(value)
+            self._properties[property_name] = bool(int(value))
         elif property_name == 'nGridSpacing':
             self._properties[property_name] = int(value)
         else:
@@ -143,7 +147,7 @@ class cordons(Node):
 
     def parse_property(self, property_name, value):
         if property_name == 'active':
-            self._properties[property_name] = parse_boolean(value)
+            self._properties[property_name] = bool(int(value))
         else:
             Node.parse_property(self, property_name, value)
 
@@ -155,7 +159,7 @@ class cordon(Node):
 
     def parse_property(self, property_name, value):
         if property_name == 'active':
-            self._properties[property_name] = parse_boolean(value)
+            self._properties[property_name] = bool(int(value))
         elif property_name == 'mins' or property_name == 'maxs':
             self._properties[property_name] = parse_vertex(value)
         else:
@@ -168,7 +172,7 @@ class box(Node):
 
     def parse_property(self, property_name, value):
         if property_name == 'active':
-            self._properties[property_name] = parse_boolean(value)
+            self._properties[property_name] = bool(int(value))
         elif property_name == 'mins' or property_name == 'maxs':
             self._properties[property_name] = parse_vertex(value)
         else:
@@ -235,7 +239,7 @@ class side(Node):
                 property_name == 'smoothing_groups':
             self._properties[property_name] = int(value)
         elif property_name == 'rotation':
-            self._properties[property_name] = parse_decimal(value)
+            self._properties[property_name] = Decimal(value)
         else:
             Node.parse_property(self, property_name, value)
 
@@ -252,7 +256,7 @@ class editor(Node):
         elif property_name in ['visgroupid', 'groupid']:
             self._properties[property_name] = int(value)
         elif property_name in ['visgroupshown', 'visgroupautoshown']:
-            self._properties[property_name] = parse_boolean(value)
+            self._properties[property_name] = bool(int(value))
         else:
             Node.parse_property(self, property_name, value)
 
@@ -275,9 +279,9 @@ class dispinfo(Node):
         elif property_name == 'startposition':
             self._properties[property_name] = parse_vertex(value)
         elif property_name == 'subdiv':
-            self._properties[property_name] = parse_boolean(value)
+            self._properties[property_name] = bool(int(value))
         elif property_name == 'elevation':
-            self._properties[property_name] = parse_decimal(value)
+            self._properties[property_name] = Decimal(value)
         else:
             Node.parse_property(self, property_name, value)
 
