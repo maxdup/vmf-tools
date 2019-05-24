@@ -284,7 +284,10 @@ class dispinfo(Node):
 # child Node classes for dispinfo
 
 
-class disp_node(Node):
+class disp_row_node(Node):
+
+    def __init__(self):
+        self._rows = []
 
     def __repr__(self):
         text = ('\t' * self.depth) + self._class_name + '\n'
@@ -297,78 +300,55 @@ class disp_node(Node):
         text += ('\t' * self.depth) + '}\n'
         return text
 
-
-class disp_vertices(disp_node):
-    def __init__(self):
-        self._rows = []
-
     def parse_property(self, row_string, value):
         rowId = int(''.join(re.findall(r'\d+', row_string)))
         if rowId >= len(self._rows):
             for i in range(len(self._rows), rowId+1):
                 self._rows.append(None)
-        row = parse_vertex_row(value)
+        row = self.parser(value)
         self._rows[rowId] = row
 
 
-class normals(disp_vertices):
+class normals(disp_row_node):
     def __init__(self):
-        disp_vertices.__init__(self)
+        disp_row_node.__init__(self)
         Node.__init__(self, 'normals')
+        self.parser = parse_vertex_row
 
 
-class offsets(disp_vertices):
+class offsets(disp_row_node):
     def __init__(self):
-        disp_vertices.__init__(self)
+        disp_row_node.__init__(self)
         Node.__init__(self, 'offsets')
+        self.parser = parse_vertex_row
 
 
-class offset_normals(disp_vertices):
+class offset_normals(disp_row_node):
     def __init__(self):
-        disp_vertices.__init__(self)
+        disp_row_node.__init__(self)
         Node.__init__(self, 'offset_normals')
+        self.parser = parse_vertex_row
 
 
-class distances(disp_node):
+class distances(disp_row_node):
     def __init__(self):
-        self._rows = []
+        disp_row_node.__init__(self)
         Node.__init__(self, 'distances')
-
-    def parse_property(self, row_string, value):
-        rowId = int(''.join(re.findall(r'\d+', row_string)))
-        if rowId >= len(self._rows):
-            for i in range(len(self._rows), rowId+1):
-                self._rows.append(None)
-        row = parse_decimal_row(value)
-        self._rows[rowId] = row
+        self.parser = parse_decimal_row
 
 
-class alphas(disp_node):
+class alphas(disp_row_node):
     def __init__(self):
-        self._rows = []
+        disp_row_node.__init__(self)
         Node.__init__(self, 'alphas')
-
-    def parse_property(self, row_string, value):
-        rowId = int(''.join(re.findall(r'\d+', row_string)))
-        if rowId >= len(self._rows):
-            for i in range(len(self._rows), rowId+1):
-                self._rows.append(None)
-        row = parse_alpha_row(value)
-        self._rows[rowId] = row
+        self.parser = parse_alpha_row
 
 
-class triangle_tags(disp_node):
+class triangle_tags(disp_row_node):
     def __init__(self):
-        self._rows = []
+        disp_row_node.__init__(self)
         Node.__init__(self, 'triangle_tags')
-
-    def parse_property(self, row_string, value):
-        rowId = int(''.join(re.findall(r'\d+', row_string)))
-        if rowId >= len(self._rows):
-            for i in range(len(self._rows), rowId+1):
-                self._rows.append(None)
-        row = parse_tritag_row(value)
-        self._rows[rowId] = row
+        self.parser = parse_tritag_row
 
 
 class allowed_verts(Node):
