@@ -11,7 +11,9 @@ class vertex():
 
     def __repr__(self):
         # Represented as: (0 0 0) or [0 0 0]
-        s = str(self._x) + ' ' + str(self._y) + ' ' + str(self._z)
+        s = repr_property_value(self._x) + ' ' + \
+            repr_property_value(self._y) + ' ' + \
+            repr_property_value(self._z)
         if (self.type == 'plane'):
             s = '(' + s + ')'
         else:
@@ -27,30 +29,6 @@ def parse_vertex(string_repr, plane=False):
                Decimal(vals[2]))
     v.type = 'plane' if plane else 'entity'
     return v
-
-
-class vertex_row():
-    def __init__(self, vals):
-        self._row = vals
-
-    def __repr__(self):
-        # Represented as: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-        row = ''
-        for r in self._row:
-            row += repr(r).strip('[').strip(']') + ' '
-        return row.strip()
-
-
-def parse_vertex_row(string_repr):
-    vals = string_repr.split(' ')
-    vertices = []
-    for i in range(0, int(len(vals)/3)):
-        v = vertex(Decimal(vals[i*3+0]),
-                   Decimal(vals[i*3+1]),
-                   Decimal(vals[i*3+2]))
-        vertices.append(v)
-    vr = vertex_row(vertices)
-    return vr
 
 
 class plane():
@@ -110,8 +88,11 @@ class uvaxis():
     def __repr__(self):
         # Represented as: [0 0 1 0] 0.25
         return '[' + \
-            str(self._x) + ' ' + str(self._y) + ' ' + \
-            str(self._z) + ' ' + str(self._t) + '] ' + str(self._scale)
+            repr_property_value(self._x) + ' ' + \
+            repr_property_value(self._y) + ' ' + \
+            repr_property_value(self._z) + ' ' + \
+            repr_property_value(self._t) + '] ' + \
+            repr_property_value(self._scale)
 
 
 def parse_uvaxis(string_repr):
@@ -130,7 +111,9 @@ class twodvector():
         self._y = y
 
     def __repr__(self):
-        s = '[' + str(self._x) + ' ' + str(self._y) + ']'
+        s = '[' + \
+            repr_property_value(self._x) + ' ' + \
+            repr_property_value(self._y) + ']'
         return s
 
 
@@ -140,7 +123,7 @@ def parse_twodvector(string_repr):
     return v
 
 
-class disp_row():
+class value_row():
     def __init__(self, vals):
         self._row = vals
 
@@ -148,8 +131,33 @@ class disp_row():
         # Represented as: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
         row = ''
         for r in self._row:
-            row += str(r).strip('[').strip(']') + ' '
+            row += repr_property_value(r).strip('[').strip(']') + ' '
         return row.strip()
+
+
+def repr_property_value(val):
+    if isinstance(val, str):
+        return val
+    elif isinstance(val, Decimal):
+        return '{:.6g}'.format(val)
+    elif isinstance(val, bool):
+        return '1' if val else '0'
+    elif isinstance(val, int):
+        return str(val)
+    else:
+        return repr(val)
+
+
+def parse_vertex_row(string_repr):
+    vals = string_repr.split(' ')
+    vertices = []
+    for i in range(0, int(len(vals)/3)):
+        v = vertex(Decimal(vals[i*3+0]),
+                   Decimal(vals[i*3+1]),
+                   Decimal(vals[i*3+2]))
+        vertices.append(v)
+    vr = value_row(vertices)
+    return vr
 
 
 def parse_decimal_row(string_repr):
@@ -157,7 +165,7 @@ def parse_decimal_row(string_repr):
     decimals = []
     for i in range(0, len(vals)):
         decimals.append(Decimal(vals[i]))
-    dr = disp_row(decimals)
+    dr = value_row(decimals)
     return dr
 
 
@@ -166,7 +174,7 @@ def parse_alpha_row(string_repr):
     alphas = []
     for i in range(0, len(vals)):
         alphas.append(min(255, max(-1, Decimal(vals[i]))))
-    ar = disp_row(alphas)
+    ar = value_row(alphas)
     return ar
 
 
@@ -178,7 +186,7 @@ def parse_tritag_row(string_repr):
         if val != 0 and val != 1 and val != 9:
             val = 0
         tags.append(val)
-    tr = disp_row(tags)
+    tr = value_row(tags)
     return tr
 
 
@@ -187,5 +195,5 @@ def parse_allowed_row(string_repr):
     allows = []
     for i in range(0, len(vals)):
         allows.append(int(vals[i]))
-    ar = disp_row(allows)
+    ar = value_row(allows)
     return ar

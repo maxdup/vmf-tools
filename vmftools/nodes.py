@@ -12,19 +12,11 @@ class Node:
     def __repr__(self):
         text = ('\t' * self.depth) + self._class_name + '\n'
         text += ('\t' * self.depth) + '{\n'
+
         for k, v in self._properties.items():
             text += ('\t' * (self.depth + 1))
-            if isinstance(v, str):
-                text += '"' + k + '" "' + v + '"\n'
-            elif isinstance(v, bool):
-                rep = '1' if v else '0'
-                text += '"' + k + '" "' + rep + '"\n'
-            elif isinstance(v, int):
-                text += '"' + k + '" "' + str(v) + '"\n'
-            elif isinstance(v, Decimal):
-                text += '"' + k + '" "' + repr(v) + '"\n'
-            else:
-                text += '"' + k + '" "' + repr(v) + '"\n'
+            text += '"' + k + '" "' + repr_property_value(v) + '"\n'
+
         for n in self._child_nodes:
             n.depth = self.depth + 1
             text += repr(n)
