@@ -1,4 +1,5 @@
 from vmftools.property_values import *
+from vmftools.property_parsers import *
 
 
 class Node:
@@ -20,6 +21,7 @@ class Node:
         for n in self._child_nodes:
             n.depth = self.depth + 1
             text += repr(n)
+
         text += ('\t' * self.depth) + '}\n'
         return text
 
@@ -194,9 +196,8 @@ class camera(Node):
         else:
             Node.parse_property(self, property_name, value)
 
+
 # node classes for World
-
-
 class solid(Node):
     def __init__(self):
         self._sides = []
