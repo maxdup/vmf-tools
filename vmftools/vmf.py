@@ -44,6 +44,41 @@ class VMF():
 
         return text
 
+    @property
+    def all_entities(self):
+        all_entities_list = list(self._world)
+        for hidden in self._hiddens:
+            if len(hidden.entities) > 0:
+                all_entities_list.extend(list(hidden.entities))
+        return all_entities_list
+
+    @property
+    def all_solids(self):
+        all_solids_list = list(self._world._solids)
+        for hidden in self._world._hiddens:
+            if len(hidden._solids) > 0:
+                all_solids_list.extend(list(hidden._solids))
+
+        for entity in self._entities:
+            for hidden in entity._hiddens:
+                if len(hidden._solids) > 0:
+                    all_solids_list.extend(list(hidden._solids))
+            if len(entity._solids) > 0:
+                all_solids_list.extend(list(entity._solids))
+
+        for hidden in self._hiddens:
+            if len(hidden._solids) > 0:
+                all_solids_list.extend(list(hidden.solids))
+            if len(hidden._entites) > 0:
+                for entity in hidden._entities:
+                    for hidden_ent in entity._hiddens:
+                        if len(hidden_ent._solids) > 0:
+                            all_solids_list.extend(list(hidden_ent.solids))
+                    if len(entity._solids) > 0:
+                        all_solids_list.extend(list(entity._solids))
+
+        return all_solids_list
+
     def add_child(self, node):
         if isinstance(node, versioninfo):
             self._versioninfo = node

@@ -124,7 +124,7 @@ class world(Node):
         elif isinstance(node, hidden):
             self._hiddens.append(node)
         elif isinstance(node, group):
-            self._hiddens.append(node)
+            self._groups.append(node)
 
         Node.add_child(self, node)
 
@@ -244,6 +244,12 @@ class solid(Node):
             self.editor = node
 
         Node.add_child(self, node)
+
+    def mirror_x(self, x):
+        for side in self._sides:
+            side._properties['plane']._v1._x = side._properties['plane']._v1._x * -1
+            side._properties['plane']._v2._x = side._properties['plane']._v1._x * -1
+            side._properties['plane']._v3._x = side._properties['plane']._v1._x * -1
 
 
 class hidden(Node):
