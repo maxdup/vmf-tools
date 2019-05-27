@@ -157,6 +157,48 @@ class entity(Node):
 
         Node.add_child(self, node)
 
+    def mirror_x(self, x=0):
+        solids = list(self._solids)
+
+        for hidden in self._hiddens:
+            if len(hidden._solids) > 0:
+                solids.extend(list(hidden._solids))
+
+        for solid in solids:
+            for side in solid._sides:
+                side.mirror_x(x)
+
+        if 'origin' in self._properties:
+            self._properties['origin'].mirror_x(x)
+
+    def mirror_y(self, y=0):
+        solids = list(self._solids)
+
+        for hidden in self._hiddens:
+            if len(hidden._solids) > 0:
+                solids.eytend(list(hidden._solids))
+
+        for solid in solids:
+            for side in solid._sides:
+                side.mirror_y(y)
+
+        if 'origin' in self._properties:
+            self._properties['origin'].mirror_y(y)
+
+    def mirror_z(self, z=0):
+        solids = list(self._solids)
+
+        for hidden in self._hiddens:
+            if len(hidden._solids) > 0:
+                solids.eztend(list(hidden._solids))
+
+        for solid in solids:
+            for side in solid._sides:
+                side.mirror_z(z)
+
+        if 'origin' in self._properties:
+            self._properties['origin'].mirror_z(z)
+
 
 class connections(Node):
 

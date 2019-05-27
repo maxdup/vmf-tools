@@ -46,36 +46,25 @@ class VMF():
 
     @property
     def all_entities(self):
-        all_entities_list = list(self._world)
+        all_entities_list = list(self._entities)
+
         for hidden in self._hiddens:
-            if len(hidden.entities) > 0:
-                all_entities_list.extend(list(hidden.entities))
+            if len(hidden._entities) > 0:
+                all_entities_list.extend(list(hidden._entities))
+
         return all_entities_list
 
     @property
     def all_solids(self):
         all_solids_list = list(self._world._solids)
-        for hidden in self._world._hiddens:
-            if len(hidden._solids) > 0:
-                all_solids_list.extend(list(hidden._solids))
-
-        for entity in self._entities:
-            for hidden in entity._hiddens:
-                if len(hidden._solids) > 0:
-                    all_solids_list.extend(list(hidden._solids))
-            if len(entity._solids) > 0:
-                all_solids_list.extend(list(entity._solids))
 
         for hidden in self._hiddens:
             if len(hidden._solids) > 0:
-                all_solids_list.extend(list(hidden.solids))
-            if len(hidden._entites) > 0:
-                for entity in hidden._entities:
-                    for hidden_ent in entity._hiddens:
-                        if len(hidden_ent._solids) > 0:
-                            all_solids_list.extend(list(hidden_ent.solids))
-                    if len(entity._solids) > 0:
-                        all_solids_list.extend(list(entity._solids))
+                all_solids_list.extend(list(hidden._solids))
+
+        for hidden in self._world._hiddens:
+            if len(hidden._solids) > 0:
+                all_solids_list.extend(list(hidden._solids))
 
         return all_solids_list
 

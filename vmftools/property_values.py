@@ -21,16 +21,13 @@ class vertex():
         return s
 
     def mirror_x(self, x=0):
-        diff = self._x - x
-        self._x = x - diff
+        self._x = x - (self._x - x)
 
     def mirror_y(self, y=0):
-        diff = self._y - y
-        self._y = y - diff
+        self._y = y - (self._y - y)
 
     def mirror_z(self, z=0):
-        diff = self._z - z
-        self._z = z - diff
+        self._z = z - (self._z - z)
 
 
 class plane():
