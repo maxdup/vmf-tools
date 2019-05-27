@@ -20,15 +20,24 @@ class vertex():
             s = '[' + s + ']'
         return s
 
+    def mirror_x(self, x=0):
+        diff = self._x - x
+        self._x = x - diff
+
+    def mirror_y(self, y=0):
+        diff = self._y - y
+        self._y = y - diff
+
+    def mirror_z(self, z=0):
+        diff = self._z - z
+        self._z = z - diff
+
 
 class plane():
     def __init__(self, v1, v2, v3):
         self._v1 = v1
-        self._v1.type = "plane"
         self._v2 = v2
-        self._v2.type = "plane"
         self._v3 = v3
-        self._v3.type = "plane"
 
     def __repr__(self):
         # Represented as: (0 0 0) (0 0 0) (0 0 0)
@@ -36,6 +45,29 @@ class plane():
             repr(self._v2) + ' ' + \
             repr(self._v3)
         return s
+
+    def mirror_reorder(self):
+        v3 = self._v3
+        self._v3 = self._v1
+        self._v1 = v3
+
+    def mirror_x(self, x=0):
+        self._v1.mirror_x(x)
+        self._v2.mirror_x(x)
+        self._v3.mirror_x(x)
+        self.mirror_reorder()
+
+    def mirror_y(self, y=0):
+        self._v1.mirror_y(y)
+        self._v2.mirror_y(y)
+        self._v3.mirror_y(y)
+        self.mirror_reorder()
+
+    def mirror_z(self, z=0):
+        self._v1.mirror_z(z)
+        self._v2.mirror_z(z)
+        self._v3.mirror_z(z)
+        self.mirror_reorder()
 
 
 class rgb():

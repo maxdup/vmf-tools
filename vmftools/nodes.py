@@ -245,11 +245,17 @@ class solid(Node):
 
         Node.add_child(self, node)
 
-    def mirror_x(self, x):
+    def mirror_x(self, x=0):
         for side in self._sides:
-            side._properties['plane']._v1._x = side._properties['plane']._v1._x * -1
-            side._properties['plane']._v2._x = side._properties['plane']._v1._x * -1
-            side._properties['plane']._v3._x = side._properties['plane']._v1._x * -1
+            side.mirror_x(x)
+
+    def mirror_y(self, y=0):
+        for side in self._sides:
+            side.mirror_y(y)
+
+    def mirror_z(self, z=0):
+        for side in self._sides:
+            side.mirror_z(z)
 
 
 class hidden(Node):
@@ -297,6 +303,18 @@ class side(Node):
             self._dispinfo = node
 
         Node.add_child(self, node)
+
+    def mirror_x(self, x=0):
+        if 'plane' in self._properties:
+            self._properties['plane'].mirror_x(x)
+
+    def mirror_y(self, y=0):
+        if 'plane' in self._properties:
+            self._properties['plane'].mirror_y(y)
+
+    def mirror_z(self, z=0):
+        if 'plane' in self._properties:
+            self._properties['plane'].mirror_z(z)
 
 
 class editor(Node):
