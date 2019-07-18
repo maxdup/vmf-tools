@@ -2,23 +2,36 @@ from decimal import Decimal
 import re
 
 
-class vertex():
-    def __init__(self, x, y, z, wrapper=''):
+class vector():  # an abstract vector xyz
+    def __init__(self, x, y, z):
         self._x = x
         self._y = y
         self._z = z
-        self.wrapper = wrapper
 
     def __repr__(self):
-        # Represented as: (0 0 0) or [0 0 0]
         s = repr_property_value(self._x) + ' ' + \
             repr_property_value(self._y) + ' ' + \
             repr_property_value(self._z)
-        if (self.wrapper == '('):
-            s = '(' + s + ')'
-        elif (self.wrapper == '['):
-            s = '[' + s + ']'
         return s
+
+
+class angle(vector):
+    def __init__(self, x, y, z):
+        vector.__init__(self, x, y, z)
+
+    def mirror_x(self, x=0):
+        pass
+
+    def mirror_y(self, y=0):
+        pass
+
+    def mirror_z(self, z=0):
+        pass
+
+
+class origin(vector):
+    def __init__(self, x, y, z):
+        vector.__init__(self, x, y, z)
 
     def mirror_x(self, x=0):
         self._x = x - (self._x - x)
@@ -28,6 +41,21 @@ class vertex():
 
     def mirror_z(self, z=0):
         self._z = z - (self._z - z)
+
+
+class vertex(origin):
+    def __init__(self, x, y, z, wrapper=''):
+        vector.__init__(self, x, y, z)
+        self.wrapper = wrapper
+
+    def __repr__(self):
+        # Represented as: (0 0 0) or [0 0 0]
+        s = origin.__repr__(self)
+        if (self.wrapper == '('):
+            s = '(' + s + ')'
+        elif (self.wrapper == '['):
+            s = '[' + s + ']'
+        return s
 
 
 class plane():
@@ -67,7 +95,7 @@ class plane():
         self.mirror_reorder()
 
 
-class rgb():
+class color255():
     def __init__(self, r, g, b):
         self._r = r
         self._g = g

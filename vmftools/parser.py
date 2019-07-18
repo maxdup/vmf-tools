@@ -1,13 +1,20 @@
 from . import vmf
+from vmftools.property_parsers import *
+from vmftools.nodes import *
+from fgdtools import FgdParse
 
 
-def VmfParse(file):
+def VmfParse(map_file, fgd_file=None):
 
-    reader = open(file, "r")
+    if fgd_file:
+        fgd = FgdParse(fgd_file)
+    else:
+        fgd = None
 
-    eof = False
+    reader = open(map_file, "r")
     map = vmf.VMF()
 
+    eof = False
     while not eof:
         class_name = ''
         current_line = reader.readline()
@@ -30,43 +37,64 @@ def VmfParse(file):
                 class_ = getattr(vmf, 'Node')
                 node = vmf.Node(class_name)
 
-            map.add_child(NodeParse(reader, node))
+            NodeParse(reader, node, map, fgd)
 
     return map
 
 
-def NodeParse(reader, node):
+def NodeParse(reader, node, parent_node, fgd=None):
 
     current_line = reader.readline()
 
+    properties = {}
+
     while '}' not in current_line:
 
-        while '"' in current_line:
+        if not current_line.strip():
+            current_line = reader.readline()
+            continue
+
+        if '"' in current_line:
             p_args = current_line.strip().strip('"').split('"')
-            node.parse_property(p_args[0], p_args[-1])
+            properties[p_args[0]] = p_args[-1]
+            current_line = reader.readline()
+            continue
 
+        child_class_name = ''
+        while '{' not in current_line:
+            child_class_name += current_line
             current_line = reader.readline()
 
-        while '}' not in current_line:
-            child_class_name = ''
-            while '{' not in current_line:
-                child_class_name += current_line
-                current_line = reader.readline()
+        curr_split = current_line.split("{", 1)
+        child_class_name = child_class_name.strip() + ' ' + \
+            curr_split[0].strip()
+        child_class_name = child_class_name.strip()
+        current_line = curr_split[1]
 
-            child_class_name = child_class_name.strip()
+        if child_class_name:
+            try:
+                child_class_ = getattr(vmf, child_class_name)
+                child_node = child_class_()
+            except:
+                child_node = vmf.Node(child_class_name)
 
-            if child_class_name:
-                try:
-                    child_class_ = getattr(vmf, child_class_name.strip())
-                    child_node = child_class_()
-                except:
-                    child_node = vmf.Node(child_class_name)
+            NodeParse(reader, child_node, node, fgd)
 
-                NodeParse(reader, child_node)
-                node.add_child(child_node)
+        else:
+            break
+        current_line = reader.readline()
 
-            else:
-                break
-            current_line = reader.readline()
+    schema = node.SCHEMA
+    if fgd and 'classname' in properties:
+        model = fgd.get_entity_by_name(properties['classname'])
+        if (model):
+            schema = dict(schema, **model.property_schema)
+            schema['classname'] = properties['classname']
 
+    if not isinstance(node, connections):
+        obj_properties = parse_properties(properties, schema, node.FALLBACK)
+        for k, v in obj_properties.items():
+            node.add_property(k, v)
+
+    parent_node.add_child(node)
     return node
